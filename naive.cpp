@@ -5,16 +5,28 @@
 #include <vector>
 using namespace std;
 
-void trialDivision(mpz_class &n, vector<mpz_class> &primeFactors){
+void getPrimes(vector<mpz_class> &primes, mpz_class &n){
 	mpz_class rootN;
 	n.get_mpz_t();
 	rootN.get_mpz_t();
 	rootN = sqrt(n);
-	int i = 2;
-	while(i < rootN){
-			if(n % i == 0){
-				cout << i << endl;
-				n = n/i;
+	for(mpz_class i = 0; i <= rootN; i++){
+		//cout << "root is " << rootN << endl;
+		if(mpz_probab_prime_p(i.get_mpz_t(), 80) > 0){
+			primes.push_back(i);
+	//		cout << "pushed " << i << endl;
+		}
+	}
+}
+
+void trialDivision(mpz_class &n, vector<mpz_class> &primes){
+	int i = 0;
+
+	while(i < primes.size()){
+//		cout << "testing " << i << " on " << primes[i] << endl;
+			if(n % primes[i] == 0){
+				cout << primes[i] << endl;
+				n = n/primes[i];
 			}else{
 				i++;
 			}
@@ -25,19 +37,19 @@ void trialDivision(mpz_class &n, vector<mpz_class> &primeFactors){
 }
 
 int main(){
-	vector<mpz_class> primeFactors;
+	vector<mpz_class> primes;
 	vector<mpz_class> numberInput;
 	mpz_class n;
-	mpz_class max = pow(10,16);
+	mpz_class max = pow(10,13);
 	while(cin >> n){
 		if(n < 2){
-			cout << n << endl;
+
 		}else if(mpz_cmp(n.get_mpz_t(),max.get_mpz_t()) >= 0){
 			cout << "fail" << endl;
 		}else{
 			mpz_class tmp = n;
-			//primeFactors.erase(primeFactors.begin(), primeFactors.end());
-			trialDivision(tmp, primeFactors);
+			getPrimes(primes, tmp);
+			trialDivision(tmp, primes);
 		}
 		cout << endl;
 	}
