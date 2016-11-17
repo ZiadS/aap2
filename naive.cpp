@@ -13,6 +13,7 @@ int main(){
   cout << "absolute value is " << abs(c) << "\n";
 
   cout << "just testing in visual studi" << endl;
+  kkrwlke
 
 	return 0;
 }
