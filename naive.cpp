@@ -12,6 +12,7 @@ int main(){
   cout << "sum is " << c << "\n";
   cout << "absolute value is " << abs(c) << "\n";
 
+  cout << "just testing in visual studi" << endl;
 
 	return 0;
 }
