@@ -13,7 +13,7 @@ void getPrimes(vector<mpz_class> &primes, mpz_class &n){
 	rootN = sqrt(n);
 	for(mpz_class i = 0; i <= rootN; i++){
 		//cout << "root is " << rootN << endl;
-		if(mpz_probab_prime_p(i.get_mpz_t(), 80) > 0){
+		if(mpz_probab_prime_p(i.get_mpz_t(), 50) > 0){
 			primes.push_back(i);
 	//		cout << "pushed " << i << endl;
 		}
@@ -42,11 +42,9 @@ int main(){
 	mpz_class n;
 	mpz_class max = 1000000000000;
 	while(cin >> n){
-		if(n < 2){
-
-		}else if(mpz_cmp(n.get_mpz_t(), max.get_mpz_t()) > 0){
+		if(mpz_cmp(n.get_mpz_t(), max.get_mpz_t()) > 0){
 			cout << "fail" << endl;
-		}else{
+		}else if(n >= 2){
 			mpz_class tmp = n;
 			getPrimes(primes, tmp);
 			trialDivision(tmp, primes);
