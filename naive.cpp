@@ -3,6 +3,7 @@
 #include <math.h>
 #include <gmpxx.h>
 #include <vector>
+#include <time.h>
 using namespace std;
 
 void getPrimes(vector<mpz_class> &primes, mpz_class &n){
@@ -35,16 +36,15 @@ void trialDivision(mpz_class &n, vector<mpz_class> &primes){
 			cout << n << endl;
 		}
 }
-
 int main(){
 	vector<mpz_class> primes;
 	vector<mpz_class> numberInput;
 	mpz_class n;
-	mpz_class max = pow(10,13);
+	mpz_class max = 1000000000000;
 	while(cin >> n){
 		if(n < 2){
 
-		}else if(mpz_cmp(n.get_mpz_t(),max.get_mpz_t()) >= 0){
+		}else if(mpz_cmp(n.get_mpz_t(), max.get_mpz_t()) > 0){
 			cout << "fail" << endl;
 		}else{
 			mpz_class tmp = n;
@@ -52,6 +52,8 @@ int main(){
 			trialDivision(tmp, primes);
 		}
 		cout << endl;
+
+
 	}
 	return 0;
 }
