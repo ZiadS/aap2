@@ -2,6 +2,19 @@
 #include <stdio.h>
 #include <math.h>
 #include <gmpxx.h>
+#include <random>
+#include <vector>
+#include <time.h>
+using namespace std;
+
+bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
+  //Implementera pollard_rho
+}
+
+#include <iostream>
+#include <stdio.h>
+#include <math.h>
+#include <gmpxx.h>
 #include <vector>
 #include <time.h>
 using namespace std;
@@ -24,7 +37,7 @@ void getPrimes(vector<mpz_class> &primes){
 	}
 }
 
-vector<mpz_class> trialDivision(mpz_class n, vector<mpz_class> &primes){
+vector<mpz_class> trialDivision(mpz_class &n, vector<mpz_class> &primes){
 	int i = 0;
 	vector<mpz_class> v;
 	mpz_class rootN;
@@ -43,12 +56,9 @@ vector<mpz_class> trialDivision(mpz_class n, vector<mpz_class> &primes){
 				i++;
 			}
 		}
-		if(n > 1 && isPrime(n)){
-			v.push_back(n);
-		}else{
-			v.clear();
-			return v;
-		}
+		if(n > 1){
+      v.push_back(n);
+    }
 		return v;
 }
 int main(){
@@ -56,20 +66,16 @@ int main(){
 	vector<mpz_class> primeFactors;
 	getPrimes(primes);
 	mpz_class n;
-	mpz_class max("10000000000000000");
 	while(cin >> n){
 		n.get_mpz_t();
 		if(isPrime(n)){ //Is prime just print
 			cout << n << endl;
 		}else{ //Try to factor
+      bool morePrimes = true;
 			primeFactors = trialDivision(n, primes);
-			if(!primeFactors.empty()){
-			for(int i = 0; i < primeFactors.size(); ++i){
-				cout << primeFactors[i] << endl;
-			}
-		}else{
-			cout << "fail" << endl;
-		}
+
+      //Forsätt med sista talet från trialDivsion och kolla om det är prime
+      //Om inte så ska vi köra pollard rho på det
 
 		}
 		cout << endl;
