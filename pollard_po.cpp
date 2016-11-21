@@ -9,9 +9,9 @@ using namespace std;
 
 bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
   //Implementera pollard_rho
-  mpz_class x;
-  mpz_class y;
-  mpz_class d;
+  mpz_class x = 2;
+  mpz_class y = 2;
+  mpz_class d = 1;
   mpz_class tmp;
   mpz_class toAbs;
   while(d = 1){
@@ -19,9 +19,13 @@ bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
     y = (((y*y) + 1)*((y*y) + 1)) + 1;
     toAbs = x - y;
     tmp = mpz_abs(toAbs);
-    mpz_gcd(d, abs(x-y), n);
+    mpz_gcd(d.get_mpz_t(), tmp.get_mpz_t(), n.get_mpz_t());
   }
-
+  if(d == n){
+    return false;
+  }else{
+    return true;
+  }
 }
 
 #include <iostream>
@@ -33,7 +37,7 @@ bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
 using namespace std;
 
 bool isPrime(mpz_class &x){
-	if(mpz_probab_prime_p(x.get_mpz_t(), 5) > 0){
+	if(mpz_probab_prime_p(x.get_mpz_t(), 15) > 0){
 		return true;
 	}else{
 		return false;
@@ -94,6 +98,9 @@ int main(){
       bool morePrimes = true;
 			primeFactors = trialDivision(n, primes);
 
+      while(morePrimes){
+
+      }
       //Forsätt med sista talet från trialDivsion och kolla om det är prime
       //Om inte så ska vi köra pollard rho på det
 
