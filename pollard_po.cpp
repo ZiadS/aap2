@@ -27,15 +27,6 @@ bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
     return true;
   }
 }
-
-#include <iostream>
-#include <stdio.h>
-#include <math.h>
-#include <gmpxx.h>
-#include <vector>
-#include <time.h>
-using namespace std;
-
 bool isPrime(mpz_class &x){
 	if(mpz_probab_prime_p(x.get_mpz_t(), 15) > 0){
 		return true;
