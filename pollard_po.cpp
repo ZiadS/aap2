@@ -14,21 +14,25 @@ bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
   mpz_class d = 1;
   mpz_class tmp;
   mpz_class toAbs;
-  while(d = 1){
-    x = (x*x) + 1;
-    y = (((y*y) + 1)*((y*y) + 1)) + 1;
+  cout << "inne" << endl;
+  while(d == 1){
+    x = ((x*x) + 1) % n;
+    y = (((((y*y) + 1) % n)*((y*y) + 1) % n) + 1) % n;
     toAbs = x - y;
-    tmp = mpz_abs(toAbs);
+    tmp = abs(toAbs);
     mpz_gcd(d.get_mpz_t(), tmp.get_mpz_t(), n.get_mpz_t());
   }
   if(d == n){
+    primeFactors.push_back(d);
     return false;
   }else{
+    primeFactors.push_back(d);
+    n = n/d;
     return true;
   }
 }
 bool isPrime(mpz_class &x){
-	if(mpz_probab_prime_p(x.get_mpz_t(), 15) > 0){
+	if(mpz_probab_prime_p(x.get_mpz_t(), 5) > 0){
 		return true;
 	}else{
 		return false;
@@ -36,7 +40,7 @@ bool isPrime(mpz_class &x){
 }
 void getPrimes(vector<mpz_class> &primes){
 	mpz_class i = 2;
-	while(primes.size() < 10000){
+	while(primes.size() < 100000){
 		if(isPrime(i)){
 			primes.push_back(i);
 	//		cout << "pushed " << i << endl;
@@ -63,7 +67,6 @@ vector<mpz_class> trialDivision(mpz_class n, vector<mpz_class> &primes){
 			if(mpz_divisible_p(n.get_mpz_t(), primes[i].get_mpz_t()) != 0){
 				v.push_back(primes[i]);
 				n = n/primes[i];
-
 			}else{
 				i++;
 			}
@@ -72,9 +75,13 @@ vector<mpz_class> trialDivision(mpz_class n, vector<mpz_class> &primes){
 			v.push_back(n);
 			return v;
 		}else{
-			v.clear();
-			return v;
-		}
+      cout << "running pollard: " << n << endl;
+      while(pollard_rho(n, v)){
+        cout << "found n: " << n << endl;
+        //Well do nothing
+      }
+      return v;
+    }
 }
 int main(){
 	vector<mpz_class> primes;
@@ -88,10 +95,13 @@ int main(){
 		}else{ //Try to factor
       bool morePrimes = true;
 			primeFactors = trialDivision(n, primes);
-
-      while(morePrimes){
-
-      }
+      if(isPrime(primeFactors[primeFactors.size()-1]) && primeFactors[primeFactors.size()-1] > 1){
+			for(int i = 0; i < primeFactors.size(); ++i){
+				cout << primeFactors[i] << endl;
+			}
+		}else{
+			cout << "fail" << endl;
+		}
       //Forsätt med sista talet från trialDivsion och kolla om det är prime
       //Om inte så ska vi köra pollard rho på det
 
