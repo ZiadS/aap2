@@ -7,62 +7,88 @@
 #include <time.h>
 using namespace std;
 bool isPrime(mpz_class &x){
-	if(mpz_probab_prime_p(x.get_mpz_t(), 5) > 0){
+	if(mpz_probab_prime_p(x.get_mpz_t(), 50) > 0){
 		return true;
 	}else{
 		return false;
 	}
 }
-bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
+bool pollard_rho(mpz_class &d, mpz_class n, vector<mpz_class> &primeFactors){
   //Implementera pollard_rho
   mpz_class x = 2;
   mpz_class y = 2;
-  mpz_class d = 1;
   mpz_class tmp;
   mpz_class toAbs;
-  //cout << "inne" << endl;
-  while(d == 1){
-    x = ((x*x) + 1) % n;
-    y = (((((y*y) + 1) % n)*((y*y) + 1) % n) + 1) % n;
+  int itr = 200000;
+  while(d == 1 && itr != 0){
+    x = (((x*x) + 1) % n);
+    y = ((((y*y) + 1) % n)*(((y*y) + 1) % n) + 1) % n;
     toAbs = x - y;
     tmp = abs(toAbs);
     mpz_gcd(d.get_mpz_t(), tmp.get_mpz_t(), n.get_mpz_t());
+    itr--;
+  }
+  if(itr == 0 && d == 1){
+    return false;
   }
   if(d == n){
     return false;
   }else{
-    if(isPrime(d)){
-      primeFactors.push_back(d);
-      n = n/d;
-    }else{
-      primeFactors.push_back(n/d);
-      n = d;
-
-    }
-    cout << "sending though " << n << endl;
     return true;
   }
 }
+bool pollard_algorithm(mpz_class d, mpz_class n, vector<mpz_class> &primeFactors){
+  d = 1;
+  if(pollard_rho(d, n, primeFactors)){
+    mpz_class tmp = n/d;
+    if(isPrime(d) && isPrime(tmp)){ // If both d & n is primes, we're done
+      primeFactors.push_back(d);
+      primeFactors.push_back(tmp);
+      return true;
+    }else if(isPrime(d) && !isPrime(tmp)){ //If tmp is not prime check if we can factor d more
+      primeFactors.push_back(d);
+      if(!pollard_algorithm(d, tmp, primeFactors)){
+        return false;
+      }
+    }else if(!isPrime(d) && isPrime(tmp)){ //If d is not prime check if we can factor tmp more
+      primeFactors.push_back(tmp);
+      if(!pollard_algorithm(d, d, primeFactors)){
+        return false;
+      }
+    }else{ //If none of them are primes
+      if(!pollard_algorithm(d, tmp, primeFactors)){
+        return false;
+      }
+      if(pollard_algorithm(d, d, primeFactors)){
+        return false;
+      }
+    }
+  }else{
+    return false;
+  }
 
+  return false;
+
+}
 void getPrimes(vector<mpz_class> &primes){
 	mpz_class i = 0;
   mpz_class p;
   mpz_class tmp = 1;
-  for(i = 1; i < 200000; ++i){
+  for(i = 1; i < 20000; ++i){
 		mpz_nextprime(p.get_mpz_t(), tmp.get_mpz_t());
     tmp = p;
     primes.push_back(p);
 		}
 	}
 
-void trialDivision(mpz_class n, vector<mpz_class> &primes, vector<mpz_class> &primeFactors){
+bool trialDivision(mpz_class &n, vector<mpz_class> &primes, vector<mpz_class> &primeFactors){
 	int i = 0;
 	mpz_class rootN;
 	n.get_mpz_t();
 	rootN.get_mpz_t();
 	rootN = sqrt(n);
 	while(i < primes.size()){
-			cout << "testing  " << primes[i] << " on " << n << endl;
+	//		cout << "testing  " << primes[i] << " on " << n << endl;
 			if(isPrime(n)){
 				break;
 			}
@@ -77,9 +103,10 @@ void trialDivision(mpz_class n, vector<mpz_class> &primes, vector<mpz_class> &pr
 			}
 		}
 		if(n > 1 && isPrime(n)){
-			primeFactors.push_back(n);
+      primeFactors.push_back(n);
+      return true;
 		}else{
-        primeFactors.clear();
+        return false;
       }
 }
 int main(){
@@ -93,23 +120,19 @@ int main(){
 		if(isPrime(n)){ //Is prime just print
 			cout << n << endl;
 		}else{ //Try to factor
-      pollard_rho(n, primeFactors);
-    //  cout <<"found: "<< n << endl;
-      trialDivision(n, primes, primeFactors);
-
-
-
-
-      if(!primeFactors.empty()){
-			for(int i = 0; i < primeFactors.size(); ++i){
-				cout << primeFactors[i] << endl;
-			}
-		}else{
-			cout << "fail" << endl;
-		}
-     //Forsätt med sista talet från trialDivsion och kolla om det är prime
-      //Om inte så ska vi köra pollard rho på det
-
+      if(trialDivision(n, primes, primeFactors)){
+        for(int i = 0; i < primeFactors.size(); ++i){
+  				cout << primeFactors[i] << endl;
+  			}
+      }else{
+        if(pollard_algorithm(1, n, primeFactors)){
+          for(int i = 0; i < primeFactors.size(); ++i){
+            cout << primeFactors[i] << endl;
+          }
+        }else{
+          cout << "fail" << endl;
+        }
+      }
 		}
 		cout << endl;
 	}
