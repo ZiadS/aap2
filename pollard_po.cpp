@@ -9,6 +9,19 @@ using namespace std;
 
 bool pollard_rho(mpz_class &n, vector<mpz_class> &primeFactors){
   //Implementera pollard_rho
+  mpz_class x;
+  mpz_class y;
+  mpz_class d;
+  mpz_class tmp;
+  mpz_class toAbs;
+  while(d = 1){
+    x = (x*x) + 1;
+    y = (((y*y) + 1)*((y*y) + 1)) + 1;
+    toAbs = x - y;
+    tmp = mpz_abs(toAbs);
+    mpz_gcd(d, abs(x-y), n);
+  }
+
 }
 
 #include <iostream>
@@ -37,7 +50,7 @@ void getPrimes(vector<mpz_class> &primes){
 	}
 }
 
-vector<mpz_class> trialDivision(mpz_class &n, vector<mpz_class> &primes){
+vector<mpz_class> trialDivision(mpz_class n, vector<mpz_class> &primes){
 	int i = 0;
 	vector<mpz_class> v;
 	mpz_class rootN;
@@ -46,20 +59,27 @@ vector<mpz_class> trialDivision(mpz_class &n, vector<mpz_class> &primes){
 	rootN = sqrt(n);
 	while(i < primes.size()){
 	//		cout << "testing  " << primes[i] << " on " << n << endl;
-			if(primes[i] > rootN){ //Because we dont need to go further
+			if(isPrime(n)){
 				break;
 			}
-			if(n % primes[i] == 0){
+			if(mpz_cmp(primes[i].get_mpz_t(), rootN.get_mpz_t()) > 0){ //Because we dont need to go further
+				break;
+			}
+			if(mpz_divisible_p(n.get_mpz_t(), primes[i].get_mpz_t()) != 0){
 				v.push_back(primes[i]);
 				n = n/primes[i];
+
 			}else{
 				i++;
 			}
 		}
-		if(n > 1){
-      v.push_back(n);
-    }
-		return v;
+		if(n > 1 && isPrime(n)){
+			v.push_back(n);
+			return v;
+		}else{
+			v.clear();
+			return v;
+		}
 }
 int main(){
 	vector<mpz_class> primes;
