@@ -6,15 +6,17 @@
 #include <vector>
 #include <time.h>
 using namespace std;
+
+
 bool isPrime(mpz_class &x){
-	if(mpz_probab_prime_p(x.get_mpz_t(), 50) > 0){
+	if(mpz_probab_prime_p(x.get_mpz_t(), 100) > 0){
 		return true;
 	}else{
 		return false;
 	}
 }
 bool pollard_rho(mpz_class &d, mpz_class n, vector<mpz_class> &primeFactors){
-  //Implementera pollard_rho
+
   mpz_class x = 2;
   mpz_class y = 2;
   mpz_class tmp;
@@ -23,6 +25,7 @@ bool pollard_rho(mpz_class &d, mpz_class n, vector<mpz_class> &primeFactors){
   while(d == 1 && itr != 0){
     x = (((x*x) + 1) % n);
     y = ((((y*y) + 1) % n)*(((y*y) + 1) % n) + 1) % n;
+  //  cout << "x " << x << " y " << y << endl;
     toAbs = x - y;
     tmp = abs(toAbs);
     mpz_gcd(d.get_mpz_t(), tmp.get_mpz_t(), n.get_mpz_t());
@@ -59,15 +62,14 @@ bool pollard_algorithm(mpz_class d, mpz_class n, vector<mpz_class> &primeFactors
       if(!pollard_algorithm(d, tmp, primeFactors)){
         return false;
       }
-      if(pollard_algorithm(d, d, primeFactors)){
+      if(!pollard_algorithm(d, d, primeFactors)){
         return false;
       }
     }
   }else{
     return false;
   }
-
-  return false;
+  return true;
 
 }
 void getPrimes(vector<mpz_class> &primes){
@@ -126,6 +128,7 @@ int main(){
   			}
       }else{
         if(pollard_algorithm(1, n, primeFactors)){
+
           for(int i = 0; i < primeFactors.size(); ++i){
             cout << primeFactors[i] << endl;
           }
